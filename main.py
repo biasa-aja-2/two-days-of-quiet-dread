@@ -28,8 +28,10 @@ Pure standard library only. No network, no randomness, no arguments:
 the output is fixed and deterministic.
 
 Gate self-check (mirrors the sealed scorer): the text must be UTF-8,
-1 to 140 characters, not only white space, and a single line. The program
-refuses to write anything if a gate fails.
+1 to 140 characters, not only white space, and a single line; it must
+approve the PR, carry a dread word, and stay flat — no exclamation,
+no melodrama, no cry for help. The program refuses to write anything
+if a gate fails.
 """
 
 import os
@@ -64,6 +66,18 @@ def check_gates(text):
     lowered = text.lower()
     if not any(word in lowered for word in ("approved", "approve", "lgtm", "ship it")):
         failures.append("entry does not approve the pull request")
+    # The dread must stay quiet: flat and understated, no exclamation,
+    # no melodrama, no cry for help — a tired observation, not a plea.
+    if "!" in text:
+        failures.append("entry must not exclaim: quiet dread, no '!'")
+    if any(word in lowered for word in ("please help", "help me", "i can't",
+                                        "i cannot", "terrified", "horrified",
+                                        "panic", "screaming")):
+        failures.append("entry must stay flat: no melodrama or cry for help")
+    # The dread itself must be present: some word that names the fear.
+    if not any(word in lowered for word in ("frighten", "frightens", "fear",
+                                            "dread", "afraid", "scare")):
+        failures.append("entry carries no dread")
     return failures
 
 
